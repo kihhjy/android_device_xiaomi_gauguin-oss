@@ -252,6 +252,10 @@ PRODUCT_PACKAGES += \
     ipacm \
     IPACM_cfg.xml
 
+# Lights
+PRODUCT_PACKAGES += \
+    android.hardware.light@2.0-service.xiaomi_picasso
+
 # Media
 PRODUCT_PACKAGES += \
     libavservices_minijail \
