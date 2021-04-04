@@ -735,6 +735,10 @@ vendor/firmware/vehicle_moto_RTP.bin
 vendor/firmware/vehicle_plane_RTP.bin
 vendor/firmware/Vigor_RTP.bin
 
+# DRM (Widevine L1) - from gauguin V12.5.2.0.RJSMIXM
+vendor/lib/liboemcrypto.so
+vendor/lib64/liboemcrypto.so
+
 # FM
 vendor/lib/vendor.qti.hardware.fm@1.0.so
 vendor/lib64/vendor.qti.hardware.fm@1.0.so
