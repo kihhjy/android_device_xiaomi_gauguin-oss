@@ -8,7 +8,7 @@
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
 
-#include <libinit_kona.h>
+#include <libinit_gauguin.h>
 
 using android::base::GetProperty;
 
