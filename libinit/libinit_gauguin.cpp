@@ -1,67 +1,71 @@
 /*
- * Copyright (C) 2021 The LineageOS Project
+ * Copyright (C) 2019 The LineageOS Project
  *
- * SPDX-License-Identifier: Apache-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
+#include <android-base/logging.h>
 #include <android-base/properties.h>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
 
-#include <libinit_gauguin.h>
+#include "property_service.h"
+#include "vendor_init.h"
 
-using android::base::GetProperty;
+void property_override(char const prop[], char const value[])
+{
+    prop_info *pi;
 
-void search_variant(const std::vector<variant_info_t> variants) {
-    std::string prop;
-
-    for (const auto& variant : variants) {
-        prop = GetProperty(variant.prop_key, "");
-        if (prop.find(variant.prop_value) != std::string::npos) {
-            set_variant_props(variant);
-            break;
-        }
-    }
-}
-
-void set_variant_props(const variant_info_t variant) {
-    set_ro_build_prop("brand", variant.brand, true);
-    set_ro_build_prop("device", variant.device, true);
-    set_ro_build_prop("marketname", variant.marketname, true);
-    set_ro_build_prop("model", variant.model, true);
-
-    set_ro_build_prop("fingerprint", variant.build_fingerprint);
-    property_override("ro.bootimage.build.fingerprint", variant.build_fingerprint.c_str());
-    property_override("ro.build.description", variant.build_description.c_str());
-}
-
-void property_override(char const prop[], char const value[], bool add) {
-    auto pi = (prop_info *) __system_property_find(prop);
-    if (pi != nullptr) {
+    pi = (prop_info*) __system_property_find(prop);
+    if (pi)
         __system_property_update(pi, value, strlen(value));
-    } else if (add) {
+    else
         __system_property_add(prop, strlen(prop), value, strlen(value));
-    }
 }
 
-std::vector<std::string> ro_props_default_source_order = {
-    "odm.",
-    "product.",
-    "system.",
-    "system_ext.",
-    "vendor.",
-    "",
-};
+void load_gauguin() {
+    property_override("ro.product.model", "M2007J17G");
+    property_override("ro.build.product", "gauguin");
+    property_override("ro.product.device", "gauguin");
+    property_override("ro.product.marketname", "Mi 10T Lite");
+}
 
-void set_ro_build_prop(const std::string &prop, const std::string &value, bool product) {
-    std::string prop_name;
+void load_gauguininpro() {
+    property_override("ro.product.model", "M2007J17I");
+    property_override("ro.build.product", "gauguininpro");
+    property_override("ro.product.device", "gauguininpro");
+    property_override("ro.product.marketname", "Mi 10i");
+}
 
-    for (const auto &source : ro_props_default_source_order) {
-        if (product)
-            prop_name = "ro.product." + source + prop;
-        else
-            prop_name = "ro." + source + "build." + prop;
+void load_gauguinpro() {
+    property_override("ro.product.model", "M2007J17C");
+    property_override("ro.build.product", "gauguinpro");
+    property_override("ro.product.device", "gauguinpro");
+    property_override("ro.product.marketname", "Redmi Note 9 Pro");
+    property_override("ro.product.brand", "Redmi");
+}
 
-        property_override(prop_name.c_str(), value.c_str(), true);
+
+void vendor_load_properties() {
+    std::string region = android::base::GetProperty("ro.boot.hwc", "");
+
+    if (region.find("CN") != std::string::npos) {
+        load_gauguinpro();
+    } else if (region.find("INDIA") != std::string::npos) {
+        load_gauguininpro();
+    } else if (region.find("GLOBAL") != std::string::npos) {
+        load_gauguin();
+    } else {
+        LOG(ERROR) << __func__ << ": unexcepted region!";
     }
 }
