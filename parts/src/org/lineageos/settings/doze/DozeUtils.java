@@ -43,7 +43,7 @@ public final class DozeUtils {
     protected static final String CATEG_PICKUP_SENSOR = "pickup_sensor";
     protected static final String CATEG_PROX_SENSOR = "proximity_sensor";
 
-    protected static final String GESTURE_PICK_UP_KEY = "gesture_pick_up";
+    protected static final String GESTURE_PICK_UP_KEY = "gesture_pick_up_type";
     protected static final String GESTURE_HAND_WAVE_KEY = "gesture_hand_wave";
     protected static final String GESTURE_POCKET_KEY = "gesture_pocket";
 
@@ -68,24 +68,19 @@ public final class DozeUtils {
     }
 
     protected static boolean getProxCheckBeforePulse(Context context) {
-        try {
-            Context con = context.createPackageContext("com.android.systemui", 0);
-            int id = con.getResources().getIdentifier("doze_proximity_check_before_pulse",
-                    "bool", "com.android.systemui");
-            return con.getResources().getBoolean(id);
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
+        // Disable proximity support in our Doze service
+        // TODO: Figure out why this doesn't work.
+        return false;
     }
 
-    protected static boolean enableDoze(Context context, boolean enable) {
+    public static boolean enableDoze(Context context, boolean enable) {
         return Settings.Secure.putInt(context.getContentResolver(),
                 DOZE_ENABLED, enable ? 1 : 0);
     }
 
     public static boolean isDozeEnabled(Context context) {
         return Settings.Secure.getInt(context.getContentResolver(),
-                DOZE_ENABLED, 1) != 0;
+                DOZE_ENABLED, 0) != 0;
     }
 
     protected static void launchDozePulse(Context context) {
@@ -118,7 +113,13 @@ public final class DozeUtils {
     }
 
     protected static boolean isPickUpEnabled(Context context) {
-        return isGestureEnabled(context, GESTURE_PICK_UP_KEY);
+        return !PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(GESTURE_PICK_UP_KEY, "0").equals("0");
+    }
+
+    protected static boolean isPickUpSetToWake(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(GESTURE_PICK_UP_KEY, "0").equals("2");
     }
 
     protected static boolean isHandwaveGestureEnabled(Context context) {
