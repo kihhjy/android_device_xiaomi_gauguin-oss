@@ -30,6 +30,18 @@ PRODUCT_PACKAGES += \
 TARGET_SCREEN_HEIGHT := 2400
 TARGET_SCREEN_WIDTH := 1080
 
+# Kernel Modules
+KERNEL_MODULES_DIR := $(LOCAL_PATH)/prebuilt/modules
+
+ifneq ($(PRODUCT_TARGET_VNDK_VERSION),)
+KERNEL_MODULES_COPY := $(TARGET_COPY_OUT_PRODUCT)/vendor_overlay/$(PRODUCT_TARGET_VNDK_VERSION)/lib/modules
+else
+KERNEL_MODULES_COPY := $(TARGET_COPY_OUT_VENDOR)/lib/modules
+endif
+
+PRODUCT_COPY_FILES += \
+    $(call find-copy-subdir-files,*,$(KERNEL_MODULES_DIR),$(KERNEL_MODULES_COPY))
+
 # Permissions
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.audio.low_latency.xml \
@@ -200,6 +212,10 @@ PRODUCT_PACKAGES += \
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.3-service.clearkey
+
+# DTB
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/prebuilt/dtb.img:dtb.img
 
 # GPS
 PRODUCT_COPY_FILES += \
