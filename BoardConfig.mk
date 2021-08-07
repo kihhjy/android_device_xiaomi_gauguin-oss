@@ -20,8 +20,12 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 
 TARGET_USES_64_BIT_BINDER := true
+
 # Assert
 TARGET_OTA_ASSERT_DEVICE := gauguin
+
+# Build
+BUILD_BROKEN_DUP_RULES := true
 
 # Audio
 AUDIO_FEATURE_ENABLED_AHAL_EXT := false
