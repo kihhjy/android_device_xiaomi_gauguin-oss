@@ -224,6 +224,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/dtb.img:dtb.img
 
+# Fastbootd
+PRODUCT_PACKAGES += \
+    fastbootd
+
 # GPS
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/gps/etc/apdr.conf:$(TARGET_COPY_OUT_VENDOR)/etc/apdr.conf \
