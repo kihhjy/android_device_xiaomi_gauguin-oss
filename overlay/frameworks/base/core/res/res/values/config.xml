@@ -684,4 +684,7 @@
 
      <!-- Whether device supports double tap to wake -->
      <bool name="config_supportDoubleTapWake">true</bool>
+
+     <!-- Whether to show min refresh rate in display settings -->
+     <bool name="config_show_min_refresh_rate_switch">true</bool>
 </resources>
